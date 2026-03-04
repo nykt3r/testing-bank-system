@@ -1,5 +1,4 @@
 import { promises as fs } from "node:fs"
-import path from "node:path"
 import { IBankAccountRepository } from "../../domain/repositories/IBankAccountRepository"
 import { BankAccount } from "../../domain/entities/BankAccount"
 import { Movement } from "../../domain/entities/Movement"
@@ -13,7 +12,7 @@ type BankAccountPersistenceModel = {
 
 export class JsonBankAccountRepository implements IBankAccountRepository {
 
-    private filePath = path.resolve(process.cwd(), "data/bankAccounts.json")
+    constructor(private filePath: string) {}
 
     // Public API
 
