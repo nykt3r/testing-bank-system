@@ -3,59 +3,91 @@ import path from "node:path";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { User } from "../../domain/entities/User";
 
+type UserPersistenceModel = {
+    id: number;
+    dni: string;
+    name: string;
+    email: string;
+}
+
 export class JsonUserRepository implements IUserRepository {
 
-    private filePath = path.resolve(process.cwd(), "data/users.json");
+    private filePath = path.resolve(process.cwd(), "data/users.json")
 
-    private async readFile(): Promise<any[]> {
-        const data = await fs.readFile(this.filePath, "utf-8");
-        return JSON.parse(data);
-    }
-
-    private async writeFile(data: any[]): Promise<void> {
-        await fs.writeFile(this.filePath, JSON.stringify(data, null, 2));
-    }
+    // Public API
 
     async findAll(): Promise<User[]> {
         const data = await this.readFile();
-        return data.map(us => 
-            new User(
-                us.id, 
-                us.dni, 
-                us.name, 
-                us.email
-            )
-        );
+        return data.map(this.toDomain);
     }
 
     async findById(id: number): Promise<User | null> {
         const data = await this.readFile();
-        const found = data.find(u => u.id === id);
-        if (!found) return null;
-        return new User(
-            found.id,
-            found.dni, 
-            found.name, 
-            found.email
-        );
+        return this.findUserInCollection(data, id);
     }
 
     async save(user: User): Promise<void> {
         const data = await this.readFile();
-        const index = data.findIndex(us => us.id === user.id);
-        const serialized = {
+        const updated = this.upsertUser(data, user);
+        await this.writeFile(updated);
+    }
+
+    // Private File Operations
+
+    private async readFile(): Promise<UserPersistenceModel[]> {
+        try {
+            const data = await fs.readFile(this.filePath, "utf-8");
+            return JSON.parse(data);
+        } catch {
+            return [];
+        }
+    }
+
+    private async writeFile(data: UserPersistenceModel[]): Promise<void> {
+        await fs.writeFile(this.filePath, JSON.stringify(data, null, 2));
+    }
+
+    // Private Mapping
+
+    private toDomain = (raw: UserPersistenceModel): User => {
+        return new User(
+            raw.id,
+            raw.dni,
+            raw.name,
+            raw.email
+        );
+    };
+
+    private toPersistence(user: User): UserPersistenceModel {
+        return {
             id: user.id,
             dni: user.dni,
             name: user.name,
             email: user.email
         };
+    }
 
-        if (index === -1) {
-            data.push(serialized);
-        } else {
-            data[index] = serialized;
-        }
+    // Private Encapsulated Logic
 
-        await this.writeFile(data);
+    private findUserInCollection(
+        data: UserPersistenceModel[],
+        id: number
+    ): User | null {
+
+        const found = data.find(u => u.id === id);
+        return found ? this.toDomain(found) : null;
+    }
+
+    private upsertUser(
+        data: UserPersistenceModel[],
+        user: User
+    ): UserPersistenceModel[] {
+
+        const serialized = this.toPersistence(user);
+        const index = data.findIndex(u => u.id === user.id);
+
+        return index === -1
+            ? [...data, serialized]
+            : data.map(u => u.id === user.id ? serialized : u);
     }
 }
