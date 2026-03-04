@@ -2,6 +2,7 @@ import {it, describe, expect} from "vitest"
 import { BankAccount } from "../../src/domain/entities/BankAccount"
 
 describe("BankAccount Entity", () => {
+
     //POSITIVE CASES
     it("Should return a Bank Account with balance greater than zero", async () => {
         // Arrange
@@ -17,7 +18,7 @@ describe("BankAccount Entity", () => {
         // Assert
         expect(acc).toBeDefined()
         expect(acc.balance).greaterThan(0)
-    });
+    })
 
     it("Should return the balance correctly", async() => {
         const account = {
@@ -124,4 +125,4 @@ describe("BankAccount Entity", () => {
 
         expect(() => acc.withdraw(101)).toThrow(Error)
     })
-});
+})
