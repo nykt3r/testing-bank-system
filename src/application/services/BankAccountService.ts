@@ -6,8 +6,8 @@ import { User } from "../../domain/entities/User"
 export class BankAccountService {
 
     constructor(
-        private accountRepository: IBankAccountRepository,
-        private userRepository: IUserRepository
+        private readonly accountRepository: IBankAccountRepository,
+        private readonly userRepository: IUserRepository
     ) {}
 
     async createAccount(id: number, userId: number, initialBalance: number) {
