@@ -32,4 +32,4 @@ jobs:
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
-          tkn-sonar: ${{ secrets.TKNSONAR }}
+          SONAR_TOKEN: ${{ secrets.TKNSONAR }}
