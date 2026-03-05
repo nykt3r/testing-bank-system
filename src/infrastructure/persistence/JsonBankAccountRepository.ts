@@ -12,7 +12,7 @@ type BankAccountPersistenceModel = {
 
 export class JsonBankAccountRepository implements IBankAccountRepository {
 
-    constructor(private filePath: string) {}
+    constructor(private readonly filePath: string) {}
 
     // Public API
 
@@ -49,7 +49,7 @@ export class JsonBankAccountRepository implements IBankAccountRepository {
 
     // Mapping
 
-    private toDomain = (raw: BankAccountPersistenceModel): BankAccount => {
+    private readonly toDomain = (raw: BankAccountPersistenceModel): BankAccount => {
         return new BankAccount(
             raw.id,
             raw.userId,

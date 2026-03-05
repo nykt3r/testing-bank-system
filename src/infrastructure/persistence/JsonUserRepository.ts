@@ -11,7 +11,7 @@ type UserPersistenceModel = {
 
 export class JsonUserRepository implements IUserRepository {
 
-    constructor(private filePath: string) {}
+    constructor(private readonly filePath: string) {}
 
     // Public API
 
@@ -48,7 +48,7 @@ export class JsonUserRepository implements IUserRepository {
 
     // Private Mapping
 
-    private toDomain = (raw: UserPersistenceModel): User => {
+    private readonly toDomain = (raw: UserPersistenceModel): User => {
         return new User(
             raw.id,
             raw.dni,

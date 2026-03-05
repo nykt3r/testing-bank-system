@@ -3,7 +3,7 @@ import { Movement, MovementType } from "./Movement";
 export class BankAccount {
 
     private _balance: number;
-    private _movements: Movement[];
+    private readonly _movements: Movement[];
 
     constructor(
         public readonly id: number, 
