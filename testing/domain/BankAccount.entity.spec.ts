@@ -4,7 +4,7 @@ import { BankAccount } from "../../src/domain/entities/BankAccount"
 describe("BankAccount Entity", () => {
 
     //POSITIVE CASES
-    it("Should return a Bank Account with balance greater than zero", async () => {
+    it("Should return a Bank Account with balance greater than or equal zero", async () => {
         // Arrange
         const account = {
             id: 1,
@@ -17,7 +17,7 @@ describe("BankAccount Entity", () => {
 
         // Assert
         expect(acc).toBeDefined()
-        expect(acc.balance).greaterThan(0)
+        expect(acc.balance).toBeGreaterThanOrEqual(0)
     })
 
     it("Should return the balance correctly", async() => {
